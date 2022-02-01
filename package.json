@@ -1,0 +1,53 @@
+{
+  "name": "aws-serverless-api",
+  "version": "1.0.0",
+  "description": "Serverless aws-nodejs-typescript template",
+  "main": "serverless.ts",
+  "scripts": {
+    "dev": "serverless offline --allowCache",
+    "lint": "eslint \"**/*.{ts,js}\"",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=14.15.0"
+  },
+  "dependencies": {
+    "@middy/core": "^2.5.7",
+    "@middy/http-cors": "^2.5.7",
+    "@middy/http-error-handler": "^2.5.7",
+    "@middy/http-json-body-parser": "^2.5.7",
+    "aws-lambda": "^1.0.7",
+    "reflect-metadata": "^0.1.13",
+    "ts-custom-error": "^3.2.0",
+    "tsyringe": "^4.6.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@serverless/typescript": "^3.0.0",
+    "@types/aws-lambda": "^8.10.92",
+    "@types/jest": "^27.4.0",
+    "@types/node": "^14.14.25",
+    "@types/uuid": "^8.3.4",
+    "babel-jest": "^25.1.0",
+    "esbuild": "^0.14.14",
+    "esbuild-jest": "^0.5.0",
+    "jest": "^25.1.0",
+    "json-schema-to-ts": "^1.5.0",
+    "serverless": "^3.0.0",
+    "serverless-esbuild": "^1.23.3",
+    "serverless-jest-plugin": "^0.4.0",
+    "serverless-offline": "^8.4.0",
+    "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.1.3",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0"
+  },
+  "author": "Johann Gillhoff",
+  "license": "MIT"
+}
