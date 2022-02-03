@@ -3,6 +3,7 @@ import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '../../..
 import { middyfy } from '../../../libs/lambda'
 import NewsArticleService from '../../../services/NewsArticleService'
 import { DiContainer } from '../../../core/DiContainer'
+import NewsArticleMapper from '../../../mappers/NewsArticleMapper'
 
 const newsArticleService = DiContainer.resolve(NewsArticleService)
 
@@ -14,7 +15,7 @@ const getNewsArticleHandler: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
     return formatJSONResponse({}, 404)
   }
 
-  return formatJSONResponse(article)
+  return formatJSONResponse(NewsArticleMapper.toPublic(article))
 }
 
 export const main = middyfy(getNewsArticleHandler)

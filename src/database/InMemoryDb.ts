@@ -12,7 +12,7 @@ export default class InMemoryDb<T> implements IDatabase<T> {
       this.items.set(id, item)
     }
 
-    async update(id: string, itemUpdate: T): Promise<T> {
+    async update(id: string, itemUpdate: Partial<T>): Promise<T> {
       const existingItem = await this.get(id)
       if (!existingItem) {
         throw new PublicError(`item to update not found for id: ${id}`, 404)

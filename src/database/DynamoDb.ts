@@ -36,7 +36,7 @@ export default class DynamoDb<T> implements IDatabase<T> {
       await docClient.put(params).promise()
     }
 
-    async update(id: string, itemUpdate: T): Promise<T> {
+    async update(id: string, itemUpdate: Partial<T>): Promise<T> {
       const updateParams = updateExpression(itemUpdate)
 
       const params = {

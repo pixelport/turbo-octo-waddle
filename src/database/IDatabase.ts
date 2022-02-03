@@ -5,7 +5,7 @@ export interface IDatabase<T> {
 
     set(id: string, item: T): Promise<void>;
 
-    update(id: string, item: T): Promise<T>;
+    update(id: string, item: Partial<T>): Promise<T>;
 
     delete(id: string): Promise<void>;
 

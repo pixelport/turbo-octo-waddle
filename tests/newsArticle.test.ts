@@ -5,7 +5,7 @@ import * as createNewsArticleHandler from './../src/functions/NewsArticle/create
 import * as getNewsArticleHandler from './../src/functions/NewsArticle/get/handler'
 import * as updateNewsArticleHandler from './../src/functions/NewsArticle/update/handler'
 import * as allNewsArticleHandler from './../src/functions/NewsArticle/all/handler'
-import NewsArticle from '../src/models/NewsArticle'
+import NewsArticle, { ArticleRelevance } from '../src/models/NewsArticle'
 import NewsArticleService from '../src/services/NewsArticleService'
 import { DiContainer } from '../src/core/DiContainer'
 
@@ -34,6 +34,7 @@ describe('happy create and fetch news article', () => {
 
     expect(createdNewsArticle.title).toBe(newsTitle)
     expect(createdNewsArticle.text).toBe(newsText)
+    expect(createdNewsArticle.relevance).toBeTruthy()
     expect(new Date().getTime() - new Date(createdNewsArticle.creationDate).getTime())
       .toBeLessThan(2000 /* 2s */)
   })
@@ -45,9 +46,12 @@ describe('happy create and fetch news article', () => {
       },
     })
     expect(getNewsResponse.statusCode).toBe(200)
-    const { title, text, creationDate } = JSON.parse(getNewsResponse.body)
+    const {
+      title, text, creationDate, relevance,
+    } = JSON.parse(getNewsResponse.body)
     expect(title).toBe(newsTitle)
     expect(text).toBe(newsText)
+    expect(relevance).toBeTruthy()
     expect(creationDate).toBe(createdNewsArticle.creationDate)
   })
 
@@ -56,10 +60,12 @@ describe('happy create and fetch news article', () => {
     expect(getAllResponse.statusCode).toBe(200)
     const getAllResult: NewsArticle[] = JSON.parse(getAllResponse.body)
 
-    const { title, text, creationDate }
-      = getAllResult.find(newsArticle => newsArticle.id === createdNewsArticle.id)
+    const {
+      title, text, creationDate, relevance,
+    } = getAllResult.find(newsArticle => newsArticle.id === createdNewsArticle.id)
     expect(title).toBe(newsTitle)
     expect(text).toBe(newsText)
+    expect(relevance).toBeTruthy()
     expect(creationDate).toBe(createdNewsArticle.creationDate)
   })
 })
@@ -83,6 +89,61 @@ it('returns 404 error code on missing article', async () => {
   expect(getNewsResponse.statusCode).toBe(404)
 })
 
+it('happy news text relevance calculation', async () => {
+  const moreExplanationMarks = 'Hello... !!!!!!!!!'
+  const moreCommas = 'Hello... ,,,,,,,,,'
+  const moreFullStops = 'Hello........... ,,,!!!'
+
+  const THIRTY_SECONDS_MS = 30 * 1000
+  const THREE_MINUTES_MS = 3 * 60 * 1000
+  const now = new Date().toISOString()
+  const withinLastMinute = new Date(new Date().getTime() - THIRTY_SECONDS_MS).toISOString()
+  const withinLastFiveMinutes = new Date(new Date().getTime() - THREE_MINUTES_MS).toISOString()
+
+  // more explanation marks
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreExplanationMarks, now)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.HOT)
+  }
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreExplanationMarks, withinLastMinute)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.HOT)
+  }
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreExplanationMarks, withinLastFiveMinutes)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.STANDARD)
+  }
+
+  // more commas
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreCommas, withinLastMinute)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.BORING)
+  }
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreCommas, withinLastMinute)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.BORING)
+  }
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreCommas, withinLastFiveMinutes)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.BORING)
+  }
+
+  // more full stops
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreFullStops, withinLastMinute)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.STANDARD)
+  }
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreFullStops, withinLastMinute)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.STANDARD)
+  }
+  {
+    const newsArticle = new NewsArticle('abc', 'title', moreFullStops, withinLastFiveMinutes)
+    expect(newsArticle.relevance).toBe(ArticleRelevance.STANDARD)
+  }
+})
+
+
 describe('happy create and update news article', () => {
   let createdNewsArticle = null
 
@@ -91,27 +152,35 @@ describe('happy create and update news article', () => {
   })
 
   it('happy update news article', async () => {
+    const updatedTitle = 'updated title'
+    const updatedText = 'updated text ,,,,,,,,, ...'
     {
       const updateNewsResponse = await wrappedUpdateNewsArticle.run({
         pathParameters: {
           newsArticleId: createdNewsArticle.id,
         },
         body: {
-          title: 'updated title',
-          text: 'updated text',
+          title: updatedTitle,
+          text: updatedText,
         },
       })
       expect(updateNewsResponse.statusCode).toBe(200)
-      const { title, text, creationDate } = JSON.parse(updateNewsResponse.body)
-      expect(title).toBe('updated title')
-      expect(text).toBe('updated text')
+      const {
+        title, text, creationDate, relevance,
+      } = JSON.parse(updateNewsResponse.body)
+      expect(title).toBe(updatedTitle)
+      expect(text).toBe(updatedText)
+      expect(relevance).toBe(ArticleRelevance.BORING)
       expect(creationDate).toBe(createdNewsArticle.creationDate)
     }
 
     {
-      const { title, text, creationDate } = await newsArticleService.get(createdNewsArticle.id)
-      expect(title).toBe('updated title')
-      expect(text).toBe('updated text')
+      const {
+        title, text, creationDate, relevance,
+      } = await newsArticleService.get(createdNewsArticle.id)
+      expect(title).toBe(updatedTitle)
+      expect(text).toBe(updatedText)
+      expect(relevance).toBe(ArticleRelevance.BORING)
       expect(creationDate).toBe(createdNewsArticle.creationDate)
     }
   })
