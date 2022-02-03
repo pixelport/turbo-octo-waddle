@@ -2,15 +2,9 @@ import 'reflect-metadata'
 import { container } from 'tsyringe'
 import { IDatabase } from '../database/IDatabase'
 import NewsArticle from '../models/NewsArticle'
-import InMemoryDb from '../database/InMemoryDb'
+import DynamoDb from '../database/DynamoDb'
 
-// Please note: because serverless-offline will break tsyringe usage between
-// different handlers, using globals is required for the in MemoryDatabase
-
-// @ts-ignore
-global.inMemoryDb = global.inMemoryDb || new InMemoryDb<NewsArticle>()
-
-// @ts-ignore
-container.register<IDatabase<NewsArticle>>('Database', { useValue: global.inMemoryDb })
+const localDynamoDb = new DynamoDb<NewsArticle>(process.env.NEWS_ARTICLE_TABLE)
+container.register<IDatabase<NewsArticle>>('Database', { useValue: localDynamoDb })
 
 export const DiContainer = container

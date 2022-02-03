@@ -1,5 +1,6 @@
 import { lambdaWrapper } from 'serverless-jest-plugin'
 import 'reflect-metadata'
+import './env/test-env'
 import * as createNewsArticleHandler from './../src/functions/NewsArticle/create/handler'
 import * as getNewsArticleHandler from './../src/functions/NewsArticle/get/handler'
 import * as updateNewsArticleHandler from './../src/functions/NewsArticle/update/handler'

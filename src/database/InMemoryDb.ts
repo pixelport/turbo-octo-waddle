@@ -1,5 +1,5 @@
 import { IDatabase } from './IDatabase'
-import PublicError from '../core/PublicError'
+import PublicError from '../libs/PublicError'
 
 export default class InMemoryDb<T> implements IDatabase<T> {
     items = new Map<string, T>();

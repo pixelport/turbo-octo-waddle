@@ -1,5 +1,5 @@
 import schema from './schema'
-import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '../../../libs/apiGateway'
+import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '../../../libs/api-gateway'
 import { middyfy } from '../../../libs/lambda'
 import NewsArticleService from '../../../services/NewsArticleService'
 import { DiContainer } from '../../../core/DiContainer'

@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto'
 import { inject, injectable } from 'tsyringe'
 import { IDatabase } from '../database/IDatabase'
 import NewsArticle from '../models/NewsArticle'
-import PublicError from '../core/PublicError'
+import PublicError from '../libs/PublicError'
 
 /**
  * Please note: Because serverless-offline

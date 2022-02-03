@@ -10,15 +10,19 @@ Depending on your preferred package manager, follow the instructions below to de
 
 ### Using NPM
 
+Installation:
 - Run `npm i` to install the project dependencies
+- Run `npm run install-db` to install the local DynamoDb once. A JRE is needed.
+  
+Running locally:
 - Run `npm run dev` to start a local dev server at port 8080
-
 
 ### Known issues
 The request validation doesn't work when run locally, but it is working fine when deployed. This is a [known issue](https://github.com/dherault/serverless-offline/issues/894) within in the serverless-offline package.
 If this would be a real project, I would try to switch to [localstack](https://localstack.cloud/). Maybe they do have a better AWS API Gateway emulation.
 
 ### Testing
+- Run `npm run dev` (needed for local DynamoDb database)
 - Run `npm run test` to run all tests
 
 ### Local CURL usage

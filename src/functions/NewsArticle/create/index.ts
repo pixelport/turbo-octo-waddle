@@ -1,5 +1,5 @@
 import schema from './schema'
-import { handlerPath } from '../../../libs/handlerResolver'
+import { handlerPath } from '../../../libs/handler-resolver'
 import { NEWS_ARTICLE_PATH } from '../config'
 
 export default {
